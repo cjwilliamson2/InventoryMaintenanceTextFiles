@@ -1,10 +1,13 @@
+using System.Globalization;
+using static System.Net.Mime.MediaTypeNames;
+
 namespace InventoryMaintenance
 {
 	public static class InventoryDB
 	{
 		private const string Path = @"..\..\..\InventoryItems.txt";
 
-        public static List<InventoryItem> GetItems()
+         public static List<InventoryItem> GetItems()
 		{
             // create the list
             List<InventoryItem> items = new();
@@ -41,17 +44,32 @@ namespace InventoryMaintenance
                         MessageBox.Show(ex.Message, ex.ToString());
                     }
                 }
+
+                textIn.Close();
             } catch(Exception ex)
             {
                 MessageBox.Show(ex.Message, ex.ToString());
             }
 
+            
             return items;
 		}
 
 		public static void SaveItems(List<InventoryItem> items)
 		{
             // Add code here to write the List<InventoryItems> object to a text file.
+
+            FileStream outFile = new FileStream(Path, FileMode.Create, FileAccess.Write);
+            using StreamWriter textOut = new StreamWriter(outFile);
+
+            foreach(InventoryItem item in items)
+            {
+                textOut.Write(item.ItemNo.ToString() + "|");
+                textOut.Write(item.Description + "|");
+                textOut.WriteLine(item.Price.ToString());
+            }
+
+            textOut.Close();
         }
     }
 }
